@@ -1,0 +1,52 @@
+<?php
+include 'Calculation.php';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Validasi input
+    $participation = $_POST['participation'] ?? '';
+    $assignment = $_POST['assignment'] ?? '';
+    $midterm = $_POST['midterm'] ?? '';
+    $final = $_POST['final'] ?? '';
+
+    // Validasi input tidak boleh kosong
+    if ($participation === '' || $assignment === '' || $midterm === '' || $final === '') {
+        echo "Semua nilai harus diisi.";
+    } else {
+        // Validasi input harus angka
+        if (!is_numeric($participation) || !is_numeric($assignment) || !is_numeric($midterm) || !is_numeric($final)) {
+            echo "Semua nilai harus angka.";
+        } else {
+            // Validasi range nilai (0 - 100)
+            if ($participation < 0 || $participation > 100 || $assignment < 0 || $assignment > 100 || $midterm < 0 || $midterm > 100 || $final < 0 || $final > 100) {
+                echo "Nilai harus dalam rentang 0 - 100.";
+            } else {
+                // Hitung Nilai Akhir (NA)
+                $na = Calculation::calculateNA($participation, $assignment, $midterm, $final);
+                // Konversi NA ke NH
+                $nh = Calculation::convertToNH($na);
+                echo "Nilai Akhir (NA): $na<br>";
+                echo "Nilai Konversi Huruf (NH): $nh";
+            }
+        }
+    }
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculate Grades</title>
+</head>
+<body>
+    <form method="post">
+        <label>Nilai Partisipasi:</label><br>
+        <input type="text" name="participation"><br>
+        <label>Nilai Tugas:</label><br>
+        <input type="text" name="assignment"><br>
+        <label>Nilai UTS:</label><br>
+        <input type="text" name="midterm"><br>
+        <label>Nilai UAS:</label><br>
+        <input type="text" name="final"><br>
+        <input type="submit" value="Hitung">
+    </form>
+</body>
+</html>
